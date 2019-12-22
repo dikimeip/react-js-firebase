@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './container/pages/App/App';
+import App from './container/pages/App/';
 import * as serviceWorker from './serviceWorker';
 import firebase from './config/firebase';
 
-console.log(firebase);
+console.log("My Firebase"+firebase);
 
 ReactDOM.render(<App />, document.getElementById('root'));
 
