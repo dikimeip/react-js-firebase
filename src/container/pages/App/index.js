@@ -7,6 +7,7 @@ import Register from '../Register';
 import { Provider } from 'react-redux';
 import {store} from '../../../config/redux';
 
+
 function App() { 
   return (
     <Provider store={store} >
