@@ -1,6 +1,7 @@
 const initialState = {
     popup: false,
     isLogin : false,
+    isLoading : false,
     name: 'Diki'
 }
 const reducer = (state = initialState, action) => {
@@ -15,6 +16,13 @@ const reducer = (state = initialState, action) => {
         return {
             ...state,
             name: action.value
+        }
+    }
+
+    if (action.type === "CHANGE_LOADING") {
+        return{
+            ...state,
+            isLoading : action.value
         }
     }
 

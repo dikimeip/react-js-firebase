@@ -1,30 +1,23 @@
 import React, { Component } from 'react'
-import firebase from '../../../config/firebase'
+import Button from '../../../component/atoms/Button'
+import { connect } from 'react-redux'
+import { PostRegister } from '../../../config/redux/action'
 
 class Register extends Component {
     state = {
-        email:'',
-        password:''
+        email: '',
+        password: '',
     }
 
     dataHandler = (e) => {
         this.setState({
-            [e.target.name] : e.target.value
+            [e.target.name]: e.target.value
         })
     }
 
     submitHandler = (e) => {
         e.preventDefault()
-        //console.log(this.state)
-        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(res => {
-            console.log('Success',res)
-        } ).catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            console.log(errorCode,errorMessage)
-          });
-          
+        this.props.RegisterApi({email:this.state.email,password:this.state.password})
     }
 
     render() {
@@ -43,7 +36,7 @@ class Register extends Component {
                             <label>Masukan Password</label>
                             <input type="password" name="password" className="form-control" onChange={this.dataHandler} />
                         </div>
-                        <input type="submit" value="REGISTER" className="btn btn-info" onClick={this.submitHandler} />
+                        <Button onClick={this.submitHandler} title="Register" loading={this.props.isLoading} />
                     </form>
                 </div>
             </div>
@@ -51,4 +44,12 @@ class Register extends Component {
     }
 }
 
-export default Register
+const reduxState = (state) => ({
+    isLoading : state.isLoading
+})
+
+const reduxDispatch = (dispatch) => ({
+    RegisterApi : (data) => dispatch(PostRegister(data))
+})
+
+export default connect(reduxState,reduxDispatch)(Register)
