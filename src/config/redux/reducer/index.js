@@ -2,7 +2,7 @@ const initialState = {
     popup: false,
     isLogin : false,
     isLoading : false,
-    name: 'Diki'
+    user: {}
 }
 const reducer = (state = initialState, action) => {
     if (action.type === "CHANGE_POPUP") {
@@ -12,10 +12,10 @@ const reducer = (state = initialState, action) => {
         }
     }
 
-    if (action.type === "CHANGE_NAME") {
+    if (action.type === "CHANGE_USER") {
         return {
             ...state,
-            name: action.value
+            user: action.value
         }
     }
 
@@ -23,6 +23,13 @@ const reducer = (state = initialState, action) => {
         return{
             ...state,
             isLoading : action.value
+        }
+    }
+
+    if (action.type === "CHANGE_LOGIN" ) {
+        return{
+            ...state,
+            isLogin : action.value
         }
     }
 

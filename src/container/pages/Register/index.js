@@ -7,6 +7,7 @@ class Register extends Component {
     state = {
         email: '',
         password: '',
+        message:''
     }
 
     dataHandler = (e) => {
@@ -15,9 +16,23 @@ class Register extends Component {
         })
     }
 
-    submitHandler = (e) => {
+    submitHandler = async (e) => {
         e.preventDefault()
-        this.props.RegisterApi({email:this.state.email,password:this.state.password})
+        const res = await this.props.RegisterApi({email:this.state.email,password:this.state.password}).catch(err=>err)
+        if (res === true) {
+             this.setState({
+                email:'',
+                password:''
+            })
+            this.setState({
+                message:"Register Success"
+            }) 
+        } else {
+            this.setState({
+                message:"Register Failed"
+            })
+        }
+       
     }
 
     render() {
@@ -30,14 +45,15 @@ class Register extends Component {
                     <form>
                         <div className="form-group">
                             <label>Masukan email</label>
-                            <input type="text" name="email" className="form-control" onChange={this.dataHandler} />
+                            <input type="text" name="email" value={this.state.email} className="form-control" onChange={this.dataHandler} />
                         </div>
                         <div className="form-group">
                             <label>Masukan Password</label>
-                            <input type="password" name="password" className="form-control" onChange={this.dataHandler} />
+                            <input type="password" name="password" value={this.state.password} className="form-control" onChange={this.dataHandler} />
                         </div>
                         <Button onClick={this.submitHandler} title="Register" loading={this.props.isLoading} />
                     </form>
+                    <p className="text-info text-center"> {this.state.message} </p>
                 </div>
             </div>
         )
