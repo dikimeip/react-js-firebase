@@ -20,7 +20,8 @@ class Login extends Component {
     submitHandler = async  (e) => {
         e.preventDefault()
         const res = await this.props.loginApi({email:this.state.email,password:this.state.password}).catch(err => err)
-        if (res === true) {
+        if (res) {
+            localStorage.setItem('login',JSON.stringify(res))
             this.props.history.push('/')
             console.log('success')
         } else {

@@ -40,7 +40,7 @@ export const LoginApi = (data) => (dispatch) => {
             dispatch({ type: "CHANGE_LOADING", value: false })
             dispatch({ type: "CHANGE_LOGIN", value: true })
             dispatch({ type: "CHANGE_USER", value: data })
-            resolve(true,data)
+            resolve(data)
         }).catch(function (error) {
             // Handle Errors here.
             var errorCode = error.code;
@@ -60,5 +60,23 @@ export const addDataToApi = (data) => (dispatch) => {
         title : data.title,
         date : data.date,
         content : data.content
+    })
+}
+
+export const getDataApi =  (userId) => (dispatch) => {
+    return new Promise((resolve,reject) => {
+        const EndPoint = database.ref('node/'+userId)
+        EndPoint.on('value',function(snapshot){
+            //convert agar hasilnya berbentuk array
+            const data = []
+            Object.keys(snapshot.val()).map(key => {
+                data.push({
+                    id : key,
+                    data : snapshot.val()[key]
+                })
+            })
+            console.log(data)
+            dispatch({ type:"CHANGE_NODE",value:data })
+        })
     })
 }

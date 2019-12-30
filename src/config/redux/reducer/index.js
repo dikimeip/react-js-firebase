@@ -2,13 +2,21 @@ const initialState = {
     popup: false,
     isLogin : false,
     isLoading : false,
-    user: {}
+    user: {},
+    noted : {}
 }
 const reducer = (state = initialState, action) => {
     if (action.type === "CHANGE_POPUP") {
         return {
             ...state,
             popup: action.value
+        }
+    }
+
+    if (action.type === "CHANGE_NODE") {
+        return{
+            ...state,
+            noted : action.value
         }
     }
 

@@ -1,20 +1,26 @@
-import React,{Component} from 'react'
-import { addDataToApi } from '../../../config/redux/action'
+import React, { Component, Fragment } from 'react'
+import { addDataToApi, getDataApi } from '../../../config/redux/action'
 import { connect } from 'react-redux'
 
 class Dasboard extends Component {
     props = {
-        title : '',
-        content : '',
-        date : ''
+        title: '',
+        content: '',
+        date: ''
+    }
+
+    componentDidMount = () => {
+        const datas = JSON.parse(localStorage.getItem('login'))
+        this.props.getNoted(datas.uid)
     }
 
     submitHandler = (e) => {
+        const datas = JSON.parse(localStorage.getItem('login'))
         const data = {
-            title : this.state.title,
-            content : this.state.content,
-            date : new Date().getTime(),
-            userId : this.props.userData.uid
+            title: this.state.title,
+            content: this.state.content,
+            date: new Date().getTime(),
+            userId: datas.uid
         }
         this.props.saveNoted(data)
         console.log(data)
@@ -26,11 +32,12 @@ class Dasboard extends Component {
         })
     }
 
-    render(){
-        return(
+    render() {
+        console.log(this.props.noted)
+        return (
             <div className="container">
                 <h1 className="text-center">HALAMAN DASBOARD</h1>
-                <br/>
+                <br />
                 <div className="row">
                     <div className="col-md-4"></div>
                     <div className="col-md-4">
@@ -38,13 +45,29 @@ class Dasboard extends Component {
                             <input type="text" className="form-control" name="title" placeholder="Masukan Judul" onChange={this.dataHandler} />
                         </div>
                         <div className="form-group">
-                           <textarea className="form-control" name="content" onChange={this.dataHandler} ></textarea>
+                            <textarea className="form-control" name="content" onChange={this.dataHandler} ></textarea>
                         </div>
                         <button className="btn btn-info" onClick={this.submitHandler} >Simpan</button>
-                        <hr/>
-                        <p>Judul</p>
-                        <p>Tanggal</p>
-                        <p>Isi</p>
+                        <hr />
+                        {
+                            this.props.noted.length > 0 ? (
+                                //fragment agar javascript bisa dimasukan class
+                                <Fragment>
+                                    {
+                                        this.props.noted.map(note => {
+                                            return (
+                                                <div value={note.id}>
+                                                    <p><b>{note.data.title}</b></p>
+                                                    <p>{note.data.content}</p>
+                                                    <hr/>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </Fragment>
+                            ) : null
+                        }
+
                     </div>
                 </div>
             </div>
@@ -53,11 +76,13 @@ class Dasboard extends Component {
 }
 
 const reduxState = (state) => ({
-    userData : state.user
+    userData: state.user,
+    noted: state.noted
 })
 
 const reduxDispatch = (dispatch) => ({
-    saveNoted : (data) => dispatch(addDataToApi(data))
+    saveNoted: (data) => dispatch(addDataToApi(data)),
+    getNoted: (data) => dispatch(getDataApi(data))
 })
 
-export default connect(reduxState,reduxDispatch)(Dasboard) 
+export default connect(reduxState, reduxDispatch)(Dasboard) 
