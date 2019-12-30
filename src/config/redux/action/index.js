@@ -1,4 +1,4 @@
-import firebase from '../../firebase'
+import firebase,{database} from '../../firebase'
 
 export const testThunk = () => (dispatch) => {
     setTimeout(() => {
@@ -40,7 +40,7 @@ export const LoginApi = (data) => (dispatch) => {
             dispatch({ type: "CHANGE_LOADING", value: false })
             dispatch({ type: "CHANGE_LOGIN", value: true })
             dispatch({ type: "CHANGE_USER", value: data })
-            resolve(true)
+            resolve(true,data)
         }).catch(function (error) {
             // Handle Errors here.
             var errorCode = error.code;
@@ -52,4 +52,13 @@ export const LoginApi = (data) => (dispatch) => {
         })
     })
 
+}
+
+
+export const addDataToApi = (data) => (dispatch) => {
+    database.ref('node/'+data.userId).push({
+        title : data.title,
+        date : data.date,
+        content : data.content
+    })
 }
