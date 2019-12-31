@@ -75,7 +75,6 @@ export const getDataApi =  (userId) => (dispatch) => {
                     data : snapshot.val()[key]
                 })
             })
-            console.log(data)
             dispatch({ type:"CHANGE_NODE",value:data })
         })
     })
