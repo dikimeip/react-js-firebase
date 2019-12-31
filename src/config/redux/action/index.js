@@ -64,8 +64,8 @@ export const addDataToApi = (data) => (dispatch) => {
 }
 
 export const getDataApi =  (userId) => (dispatch) => {
+    const EndPoint = database.ref('node/'+userId)
     return new Promise((resolve,reject) => {
-        const EndPoint = database.ref('node/'+userId)
         EndPoint.on('value',function(snapshot){
             //convert agar hasilnya berbentuk array
             const data = []
@@ -76,6 +76,23 @@ export const getDataApi =  (userId) => (dispatch) => {
                 })
             })
             dispatch({ type:"CHANGE_NODE",value:data })
+        })
+    })
+}
+
+export const UpdateDataApi = (data) => (dispatch) => {
+    const EndPoint = database.ref('node/'+data.userId+'/'+data.noteId)
+    return new Promise((resolve,reject) => {
+        EndPoint.set({
+            title : data.title,
+            date : data.date,
+            content : data.content
+        },(err) => {
+            if (err) {
+                reject(err)
+            } else {
+                resolve(err)
+            }
         })
     })
 }

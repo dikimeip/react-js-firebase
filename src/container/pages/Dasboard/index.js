@@ -1,12 +1,15 @@
 import React, { Component, Fragment } from 'react'
-import { addDataToApi, getDataApi } from '../../../config/redux/action'
+import { addDataToApi, getDataApi, UpdateDataApi } from '../../../config/redux/action'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 class Dasboard extends Component {
-    props = {
-        title: '',
-        content: '',
-        date: ''
+    state = {
+        title: "",
+        content: "",
+        date: "",
+        noted : "",
+        button:"SIMPAN"
     }
 
     componentDidMount = () => {
@@ -22,7 +25,13 @@ class Dasboard extends Component {
             date: new Date().getTime(),
             userId: datas.uid
         }
-        this.props.saveNoted(data)
+        if (this.state.button === "SIMPAN" ) {
+             this.props.saveNoted(data)
+        } else {
+            data.noteId = this.state.noteId
+            this.props.updateNoted(data)
+        }
+       
         console.log(data)
     }
 
@@ -32,8 +41,24 @@ class Dasboard extends Component {
         })
     }
 
+    updateNoted = (note) => {
+        this.setState({
+            noteId : note.id,
+            title : note.data.title,
+            content : note.data.content,
+            button:"UPDATE"
+        })
+    }
+
+    cancelHandler = () => {
+        this.setState({
+            title : "",
+            content : "",
+            button:"SIMPAN"
+        })
+    }
+
     render() {
-        console.log(this.props.noted)
         return (
             <div className="container">
                 <h1 className="text-center">HALAMAN DASBOARD</h1>
@@ -42,12 +67,17 @@ class Dasboard extends Component {
                     <div className="col-md-4"></div>
                     <div className="col-md-4">
                         <div className="form-group">
-                            <input type="text" className="form-control" name="title" placeholder="Masukan Judul" onChange={this.dataHandler} />
+                            <input type="text" className="form-control" value={this.state.title} name="title" placeholder="Masukan Judul" onChange={this.dataHandler} />
                         </div>
                         <div className="form-group">
-                            <textarea className="form-control" name="content" onChange={this.dataHandler} ></textarea>
+                            <textarea className="form-control" name="content" onChange={this.dataHandler} value={this.state.content} ></textarea>
                         </div>
-                        <button className="btn btn-info" onClick={this.submitHandler} >Simpan</button>
+                        <button className="btn btn-info" onClick={this.submitHandler} >{this.state.button}</button>
+                        {
+                            this.state.button === "UPDATE"?(
+                                 <button className="btn btn-warning" onClick={this.cancelHandler} >Cancel</button>
+                            ):<div/>
+                        }
                         <hr />
                         {
                             this.props.noted.length > 0 ? (
@@ -56,10 +86,12 @@ class Dasboard extends Component {
                                     {
                                         this.props.noted.map(note => {
                                             return (
-                                                <div value={note.id}>
-                                                    <p><b>{note.data.title}</b></p>
-                                                    <p>{note.data.content}</p>
-                                                    <hr/>
+                                                <div value={note.uid} onClick={() => this.updateNoted(note)} >
+                                                    <Link>
+                                                        <p><b>{note.data.title}</b></p>
+                                                        <p>{note.data.content}</p>
+                                                    </Link>
+                                                    <hr />
                                                 </div>
                                             )
                                         })
@@ -82,7 +114,8 @@ const reduxState = (state) => ({
 
 const reduxDispatch = (dispatch) => ({
     saveNoted: (data) => dispatch(addDataToApi(data)),
-    getNoted: (data) => dispatch(getDataApi(data))
+    getNoted: (data) => dispatch(getDataApi(data)),
+    updateNoted : (data) => dispatch(UpdateDataApi(data)),
 })
 
 export default connect(reduxState, reduxDispatch)(Dasboard) 
