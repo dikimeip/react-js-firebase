@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react'
-import { addDataToApi, getDataApi, UpdateDataApi } from '../../../config/redux/action'
+import { addDataToApi, getDataApi, UpdateDataApi, DeleteDataApi } from '../../../config/redux/action'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
@@ -8,8 +8,8 @@ class Dasboard extends Component {
         title: "",
         content: "",
         date: "",
-        noted : "",
-        button:"SIMPAN"
+        noted: "",
+        button: "SIMPAN"
     }
 
     componentDidMount = () => {
@@ -25,13 +25,13 @@ class Dasboard extends Component {
             date: new Date().getTime(),
             userId: datas.uid
         }
-        if (this.state.button === "SIMPAN" ) {
-             this.props.saveNoted(data)
+        if (this.state.button === "SIMPAN") {
+            this.props.saveNoted(data)
         } else {
             data.noteId = this.state.noteId
             this.props.updateNoted(data)
         }
-       
+
         console.log(data)
     }
 
@@ -43,19 +43,33 @@ class Dasboard extends Component {
 
     updateNoted = (note) => {
         this.setState({
-            noteId : note.id,
-            title : note.data.title,
-            content : note.data.content,
-            button:"UPDATE"
+            noteId: note.id,
+            title: note.data.title,
+            content: note.data.content,
+            button: "UPDATE"
         })
     }
 
     cancelHandler = () => {
         this.setState({
-            title : "",
-            content : "",
-            button:"SIMPAN"
+            title: "",
+            content: "",
+            button: "SIMPAN"
         })
+    }
+
+    deleteHandler = (e, note) => {
+        e.stopPropagation()
+        e.preventDefault()
+        if (window.confirm('Hapus Data..?')) {
+            const datas = JSON.parse(localStorage.getItem('login'))
+            const data = {
+                userId : datas.uid ,
+                noteId : note.id
+            }
+            this.props.deleteNoted(data)
+        }
+
     }
 
     render() {
@@ -74,9 +88,9 @@ class Dasboard extends Component {
                         </div>
                         <button className="btn btn-info" onClick={this.submitHandler} >{this.state.button}</button>
                         {
-                            this.state.button === "UPDATE"?(
-                                 <button className="btn btn-warning" onClick={this.cancelHandler} >Cancel</button>
-                            ):<div/>
+                            this.state.button === "UPDATE" ? (
+                                <button className="btn btn-warning" onClick={this.cancelHandler} >Cancel</button>
+                            ) : <div />
                         }
                         <hr />
                         {
@@ -90,6 +104,7 @@ class Dasboard extends Component {
                                                     <Link>
                                                         <p><b>{note.data.title}</b></p>
                                                         <p>{note.data.content}</p>
+                                                        <button className="btn btn-danger" onClick={(e) => this.deleteHandler(e, note)} >DELETE</button>
                                                     </Link>
                                                     <hr />
                                                 </div>
@@ -115,7 +130,8 @@ const reduxState = (state) => ({
 const reduxDispatch = (dispatch) => ({
     saveNoted: (data) => dispatch(addDataToApi(data)),
     getNoted: (data) => dispatch(getDataApi(data)),
-    updateNoted : (data) => dispatch(UpdateDataApi(data)),
+    updateNoted: (data) => dispatch(UpdateDataApi(data)),
+    deleteNoted: (data) => dispatch(DeleteDataApi(data)),
 })
 
 export default connect(reduxState, reduxDispatch)(Dasboard) 

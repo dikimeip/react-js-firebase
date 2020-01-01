@@ -96,3 +96,10 @@ export const UpdateDataApi = (data) => (dispatch) => {
         })
     })
 }
+
+export const DeleteDataApi = (data) => (dispatch) => {
+    const EndPoint = database.ref('node/'+data.userId+'/'+data.noteId)
+    return new Promise((resolve,reject) => {
+        EndPoint.remove();
+    })
+}
